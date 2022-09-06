@@ -83,3 +83,23 @@ func (p *Proxx) StepsCount() int {
 func (p *Proxx) StartTime() time.Time {
 	return p.startTime
 }
+
+func (p *Proxx) OpenAllCells() {
+	for i, row := range p.board {
+		for j := range row {
+			p.board[i][j].IsOpened = true
+		}
+	}
+}
+
+func (p *Proxx) Won() bool {
+	for _, row := range p.board {
+		for _, c := range row {
+			if !c.IsOpened && !c.IsHole {
+				return false
+			}
+		}
+	}
+
+	return true
+}
