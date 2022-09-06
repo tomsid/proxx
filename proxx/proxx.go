@@ -1,6 +1,8 @@
 package proxx
 
 import (
+	"errors"
+	"math/rand"
 	"time"
 )
 
@@ -13,8 +15,27 @@ type Proxx struct {
 
 // NewGame creates the game with populated board of specified size and black holes amount
 func NewGame(rowsNum, columnsNum, holesNum int) (*Proxx, error) {
+	rand.Seed(time.Now().UnixNano())
+
+	if rowsNum < 1 || columnsNum < 1 {
+		return nil, errors.New("invalid board size - number of columns and rows can't be less than 1")
+	}
+
+	if rowsNum*columnsNum <= holesNum {
+		return nil, errors.New("holes number should be less than the total number of cells")
+	}
+
+	if holesNum < 1 {
+		return nil, errors.New("need to place at least one hole")
+	}
+
+	b, err := generateBoard(rowsNum, columnsNum, holesNum)
+	if err != nil {
+		return nil, err
+	}
+
 	game := &Proxx{
-		board: board{},
+		board: b,
 	}
 
 	return game, nil
@@ -22,6 +43,14 @@ func NewGame(rowsNum, columnsNum, holesNum int) (*Proxx, error) {
 
 func (p *Proxx) Start() {
 	p.startTime = time.Now()
+}
+
+func (p *Proxx) IsHole(row int, column int) bool {
+	return p.board[row][column].IsHole
+}
+
+func (p *Proxx) Opened(row int, column int) bool {
+	return p.board[row][column].IsOpened
 }
 
 func (p *Proxx) StepsCount() int {
