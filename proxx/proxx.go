@@ -41,6 +41,29 @@ func NewGame(rowsNum, columnsNum, holesNum int) (*Proxx, error) {
 	return game, nil
 }
 
+func (p *Proxx) OpenCell(row, column int) {
+	p.stepsCount++
+	p.revealCell(row, column)
+}
+
+func (p *Proxx) revealCell(row, column int) {
+	clickedCell := p.board[row][column]
+	clickedCell.IsOpened = true
+	if clickedCell.nearHole() {
+		return
+	}
+
+	for _, surroundingCell := range clickedCell.SurroundingCells {
+		if surroundingCell.nearHole() {
+			surroundingCell.IsOpened = true
+		} else {
+			if !surroundingCell.IsOpened {
+				p.revealCell(surroundingCell.Row, surroundingCell.Column)
+			}
+		}
+	}
+}
+
 func (p *Proxx) Start() {
 	p.startTime = time.Now()
 }
