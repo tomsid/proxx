@@ -17,3 +17,7 @@ To disable color, set `COLORED` env var to `false`:
 ### Tests
 
 `go test ./...`
+
+### Test parts
+
+Each task part is commited separately if you want to review it one by one.
